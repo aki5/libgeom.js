@@ -85,7 +85,6 @@
 	Mat4.prototype.Multiply = function(other){
 		var mthis = this.arr;
 		var mother = other.arr;
-		var mnew = new Mat4();
 		for(var row = 0; row < 4; row++){
 			for(var col = 0; col < 4; col++){
 				tmpVals[row*4+col] = 0.0;

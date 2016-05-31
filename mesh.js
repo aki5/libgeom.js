@@ -194,7 +194,7 @@
 
 				var t = dot3(e2, Q) * detrcp;
 				if(t >= 0.0 && t < mint){
-					var pl = cross3(e1, e2);
+					//var pl = cross3(e1, e2);
 					mint = t;
 					//isectPt = add3(s0, scale3(dir, mint));
 					//console.log("t " + t + " dst0 " + dot3(P, v0) + " dst1 " + dot3(P, isectPt));
