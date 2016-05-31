@@ -15,11 +15,17 @@
 		this.normalObject = null;
 		this.vertexObject = null;
 		this.colorObject = null;
-		this.indexObject = null;
+
+		this.trianglesObject = null;
+		this.edgesObject = null;
+
 		this.normals = new Float32Array(9 * maxtris);
 		this.vertices = new Float32Array(9 * maxtris);
 		this.colors = new Uint8Array(12 * maxtris);
-		this.indices = new Uint16Array(3 * maxtris);
+
+		this.triangles = new Uint16Array(3 * maxtris);
+		this.edges = new Uint16Array(6 * maxtris);
+
 		this.bbox = new Float32Array(6);
 	}
 
@@ -45,9 +51,15 @@
 
 			gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-			mesh.indexObject = gl.createBuffer();
-			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexObject);
-			gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mesh.indices, gl.STATIC_DRAW);
+			mesh.trianglesObject = gl.createBuffer();
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.trianglesObject);
+			gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mesh.triangles, gl.STATIC_DRAW);
+
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+			mesh.edgesObject = gl.createBuffer();
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.edgesObject);
+			gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mesh.edges, gl.STATIC_DRAW);
 
 			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 		}
@@ -65,7 +77,22 @@
 		gl.vertexAttribPointer(2, 4, gl.UNSIGNED_BYTE, true, 0, 0);
 
 		// Bind the index array
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexObject);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.trianglesObject);
+	}
+
+	Mesh.prototype.BindEdges = function(gl) {
+		// Set up all the vertex attributes for vertices, normals and colors
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexObject);
+		gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.normalObject);
+		gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, 0);
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.colorObject);
+		gl.vertexAttribPointer(2, 4, gl.UNSIGNED_BYTE, true, 0, 0);
+
+		// Bind the index array
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.edgesObject);
 	}
 
 	function bboxupdate(bbox, vert) {
@@ -119,7 +146,10 @@
 		mesh.normals.set(normal, 9*i+6);
 		mesh.colors.set(color, 12*i+8);
 
-		mesh.indices.set([3*i+0, 3*i+1, 3*i+2], 3*i);
+		mesh.triangles.set([3*i+0, 3*i+1, 3*i+2], 3*i);
+		mesh.edges.set([3*i+0, 3*i+1], 6*i+0);
+		mesh.edges.set([3*i+1, 3*i+2], 6*i+2);
+		mesh.edges.set([3*i+2, 3*i+0], 6*i+4);
 		mesh.ntris = i+1;
 	}
 
@@ -137,9 +167,9 @@
 		var mint = 2.0;
 		for(var mesh = this; mesh != null; mesh = mesh.next){
 			for(var i = 0; i < mesh.ntris; i++){
-				var t0i = 3*mesh.indices[3*i+0];
-				var t1i = 3*mesh.indices[3*i+1];
-				var t2i = 3*mesh.indices[3*i+2];
+				var t0i = 3*mesh.triangles[3*i+0];
+				var t1i = 3*mesh.triangles[3*i+1];
+				var t2i = 3*mesh.triangles[3*i+2];
 				var v0 = mesh.vertices.subarray(t0i, t0i+3);
 				var v1 = mesh.vertices.subarray(t1i, t1i+3);
 				var v2 = mesh.vertices.subarray(t2i, t2i+3);
