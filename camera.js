@@ -36,6 +36,11 @@
 		return norm3([cent[0]-pos[0], cent[1]-pos[1], cent[2]-pos[2]]);
 	}
 
+	Camera.prototype.SetCenter = function(cent) {this.cent = cent;}
+	Camera.prototype.SetDistance = function(dist) {this.dist = dist;}
+	Camera.prototype.SetPitch = function(pitch) {this.pitch = pitch;}
+	Camera.prototype.SetYaw = function(yaw) {this.yaw = yaw;}
+
 	Camera.prototype.Update = function(yaw, pitch) {
 		this.yaw = this.drag.yaw + yaw;
 		if(this.yaw > Math.PI)
