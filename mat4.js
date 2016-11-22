@@ -82,6 +82,39 @@
 		]));
 	}
 
+	Mat4.prototype.RotX = function(angle){
+		var c = Math.cos(angle);
+		var s = Math.sin(angle);
+		return this.Multiply(new Mat4([
+			 1, 0, 0, 0,
+			 0, c,-s, 0,
+			 0, s, c, 0,
+			 0, 0, 0, 1
+		]));
+	}
+
+	Mat4.prototype.RotY = function(angle){
+		var c = Math.cos(angle);
+		var s = Math.sin(angle);
+		return this.Multiply(new Mat4([
+			 c, 0, s, 0,
+			 0, 1, 0, 0,
+			-s, 0, c, 0,
+			 0, 0, 0, 1
+		]));
+	}
+
+	Mat4.prototype.RotZ = function(angle){
+		var c = Math.cos(angle);
+		var s = Math.sin(angle);
+		return this.Multiply(new Mat4([
+			 c,-s, 0, 0,
+			 s, c, 0, 0,
+			 0, 0, 1, 0,
+			 0, 0, 0, 1
+		]));
+	}
+
 	Mat4.prototype.Multiply = function(other){
 		var mthis = this.arr;
 		var mother = other.arr;
@@ -275,6 +308,15 @@
 		return npt;
 	}
 
+	Mat4.prototype.TransInPlace = function(pt) {
+		var m = this.arr;
+		var px = pt[0], py = pt[1], pz = pt[2], pw = pt[3];
+		pt[0] = pw * m[12] + px * m[0] + py * m[4] + pz * m[8];
+		pt[1] = pw * m[13] + px * m[1] + py * m[5] + pz * m[9];
+		pt[2] = pw * m[14] + px * m[2] + py * m[6] + pz * m[10];
+		pt[3] = pw * m[15] + px * m[3] + py * m[7] + pz * m[11];
+		return pt;
+	}
 
 	window["mat4"] = { New: New };
 })(window);
